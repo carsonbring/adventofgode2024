@@ -30,12 +30,12 @@ func part1() {
 	for scanner.Scan() {
 		line := strings.Fields(scanner.Text())
 		if len(line) < 2 {
-			fmt.Println(fmt.Errorf("Input in incorrect format"))
+			fmt.Println(fmt.Errorf("input in incorrect format"))
 		} else {
 			location1, err := strconv.Atoi(line[0])
 			location2, err2 := strconv.Atoi(line[1])
 			if err != nil || err2 != nil {
-				fmt.Println(fmt.Errorf("Input in incorrect format, couldn't convert strings to ints"))
+				fmt.Println(fmt.Errorf("input in incorrect format, couldn't convert strings to ints"))
 			} else {
 				group1 = append(group1, location1)
 				group2 = append(group2, location2)
