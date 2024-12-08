@@ -67,88 +67,40 @@ func ReadInput() ([]Equation, error) {
 	return equations, nil
 }
 
-func PopulateTree(root *Node, operands []int) {
+func RecursiveSearch(value int, result int, operands []int) int {
 	if len(operands) == 0 {
-		return
-	} else {
-		leftNode := &Node{
-			Value: root.Value + operands[0],
-			Left:  nil,
-			Right: nil,
-		}
-		rightNode := &Node{
-			Value: root.Value * operands[0],
-			Left:  nil,
-			Right: nil,
-		}
-		root.Left = leftNode
-		root.Right = rightNode
-
-		PopulateTree(leftNode, operands[1:])
-		PopulateTree(rightNode, operands[1:])
-
-	}
-}
-
-func FindInLeaves(root *Node, element int) bool {
-	if root.Left == nil && root.Right == nil {
-		if root.Value == element {
-			return true
+		if result == value {
+			return value
 		} else {
-			return false
+			return 0
 		}
 	} else {
-		return FindInLeaves(root.Left, element) || FindInLeaves(root.Right, element)
+		if RecursiveSearch(value*operands[0], result, operands[1:]) != 0 || RecursiveSearch(value+operands[0], result, operands[1:]) != 0 {
+			return result
+		} else {
+			return 0
+		}
 	}
 }
 
-func PopulateTree2(root *Node2, operands []int) {
+func RecursiveSearch2(value int, result int, operands []int) int {
 	if len(operands) == 0 {
-		return
+		if result == value {
+			return value
+		} else {
+			return 0
+		}
 	} else {
-		sumNode := &Node2{
-			Value:  root.Value + operands[0],
-			Sum:    nil,
-			Prod:   nil,
-			Concat: nil,
-		}
-		prodNode := &Node2{
-			Value:  root.Value * operands[0],
-			Sum:    nil,
-			Prod:   nil,
-			Concat: nil,
-		}
-		concatInts, err := strconv.Atoi(strconv.Itoa(root.Value) + strconv.Itoa(operands[0]))
+		concatInts, err := strconv.Atoi(strconv.Itoa(value) + strconv.Itoa(operands[0]))
 		if err != nil {
 			fmt.Printf("Error in string to integer conversion ")
 		}
-		concatNode := &Node2{
-			Value:  concatInts,
-			Sum:    nil,
-			Prod:   nil,
-			Concat: nil,
-		}
 
-		root.Sum = sumNode
-		root.Prod = prodNode
-		root.Concat = concatNode
-
-		PopulateTree2(sumNode, operands[1:])
-		PopulateTree2(prodNode, operands[1:])
-		PopulateTree2(concatNode, operands[1:])
-
-	}
-}
-
-func FindInLeaves2(root *Node2, element int) bool {
-	if root.Concat == nil && root.Sum == nil && root.Prod == nil {
-		if root.Value == element {
-			return true
+		if RecursiveSearch2(value*operands[0], result, operands[1:]) != 0 || RecursiveSearch2(value+operands[0], result, operands[1:]) != 0 || RecursiveSearch2(concatInts, result, operands[1:]) != 0 {
+			return result
 		} else {
-			return false
+			return 0
 		}
-	} else {
-		return FindInLeaves2(root.Concat, element) || FindInLeaves2(root.Sum, element) || FindInLeaves2(root.Prod, element)
 	}
 }
 
@@ -159,16 +111,7 @@ func Part1() (int, error) {
 		return 0, err
 	}
 	for _, equation := range equations {
-		root := &Node{
-			Value: equation.Operands[0],
-			Right: nil,
-			Left:  nil,
-		}
-		PopulateTree(root, equation.Operands[1:])
-		if FindInLeaves(root, equation.Result) {
-			sum = sum + equation.Result
-		}
-
+		sum = sum + RecursiveSearch(equation.Operands[0], equation.Result, equation.Operands[1:])
 	}
 	return sum, nil
 }
@@ -180,17 +123,7 @@ func Part2() (int, error) {
 		return 0, err
 	}
 	for _, equation := range equations {
-		root := &Node2{
-			Value:  equation.Operands[0],
-			Sum:    nil,
-			Prod:   nil,
-			Concat: nil,
-		}
-		PopulateTree2(root, equation.Operands[1:])
-		if FindInLeaves2(root, equation.Result) {
-			sum = sum + equation.Result
-		}
-
+		sum = sum + RecursiveSearch2(equation.Operands[0], equation.Result, equation.Operands[1:])
 	}
 	return sum, nil
 }
