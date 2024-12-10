@@ -104,18 +104,19 @@ func DFS(sourceNode *Node, graph []*Node) int {
 	return score
 }
 
-func DFSRec2(sourceNode *Node, visited map[*Node]bool, score *int) {
-	if visited[sourceNode] {
+func DFSRec2(sourceNode *Node, score *int) {
+	if sourceNode.visited {
 		return
 	}
-	visited[sourceNode] = true
-	defer func() { visited[sourceNode] = false }()
+	sourceNode.visited = true
+	defer func() { sourceNode.visited = false }()
+
 	for _, node := range sourceNode.adjList {
-		if !visited[node] && node.value == sourceNode.value+1 {
+		if !node.visited && node.value == sourceNode.value+1 {
 			if node.value == 9 {
 				(*score)++
 			} else {
-				DFSRec2(node, visited, score)
+				DFSRec2(node, score)
 			}
 		}
 	}
@@ -123,11 +124,10 @@ func DFSRec2(sourceNode *Node, visited map[*Node]bool, score *int) {
 
 func DFS2(sourceNode *Node, graph []*Node) int {
 	score := 0
-	visited := map[*Node]bool{}
 	for i := range graph {
-		visited[graph[i]] = false
+		graph[i].visited = false
 	}
-	DFSRec2(sourceNode, visited, &score)
+	DFSRec2(sourceNode, &score)
 	return score
 }
 
